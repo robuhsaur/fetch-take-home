@@ -12,34 +12,38 @@ function BootStrapInput(props) {
     )
 };
 
-function UserForm(props) {
-    const name = useState("");
-    const email = useState("");
-    const password = useState("");
-    const occupation = useState([]);
-    const state = useState([]);
+function UserForm() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [occupation, setOccupation] = useState([]);
+    const [location, setLocation] = useState([]);
 
     useEffect(() => {
         async function getInfo() {
-            console.log("getting occupations and states")
             const url = "https://frontend-take-home.fetchrewards.com/form"
             const response = await fetch(url, {
-                method: "get",
+                method: "GET",
                 headers: {
                     'Content-Type': 'application/json'
-                }
-            }
-            )
-            const formData = await response.json()
+                },
+            })
+            const data = await response.json()
+            console.log(data)
             if (response.ok) {
-                const occupation = formData.occupation.value
+                setOccupation(data.occupations)
+                setLocation(data.states)
+                console.log(occupation)
+                console.log(location, "states")
             }
 
-        }
-    }
-    )
+        } getInfo()
+    }, []
+    );
 
-    async function handleSubmit() {
+
+    async function handleSubmit(e) {
+        e.preventDefault(e)
         const postUrl = "https://frontend-take-home.fetchrewards.com/form"
         const response = await fetch(
             postUrl, {
@@ -47,7 +51,7 @@ function UserForm(props) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name, email, password, occupation, state })
+            body: JSON.stringify({ setName, setEmail, setPassword, setOccupation, setLocation })
         }
         )
         if (response.ok) {
@@ -66,24 +70,31 @@ function UserForm(props) {
                         <form className="justify-content-center">
                             <BootStrapInput
                                 id="name"
-                                placeholder="ex. John Smith"
+                                placeholder="Full name"
                                 type="text"
-                                className="form-control" />
+                                value={name}
+                                onChange={e => setName(e.target.value)} />
                             <BootStrapInput
                                 id="email"
-                                placeholder="ex. johnsmith@gmail.com"
-                                type="text" />
+                                placeholder="email"
+                                type="text"
+                                onChange={e => setEmail(e.target.value)}
+                                value={email} />
                             <BootStrapInput
                                 id="password"
                                 placeholder="password"
-                                type="text" />
+                                type="text"
+                                onChange={e => setPassword(e.target.value)}
+                                value={password} />
                             <div className="form-floating mb-3">
                                 <input placeholder="Occupation" required type="text" name="occupation" id="occupation" className="form-control" />
                                 <label htmlFor="occupation">Occupation</label>
                             </div>
                             <div className="form-floating mb-3">
-                                <input placeholder="State" required type="text" name="State" id="State" className="form-control" />
-                                <label htmlFor="State">State</label>
+                                <select>
+                                    <option value="">Choose a state</option>
+
+                                </select>
                             </div>
                             <button onClick={handleSubmit}> Submit </button>
                         </form>
@@ -95,3 +106,34 @@ function UserForm(props) {
 }
 
 export default UserForm
+
+
+// function getInfo() {
+//     console.log("getting occupations and states")
+//     const url = "https://frontend-take-home.fetchrewards.com/form"
+//     const response = fetch(url, {
+//         method: "get",
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }
+//     )
+//     if (response.ok) {
+//         const data = response.json()
+//         console.log(data, "this should be the occupations and states")
+//         setOccupation({ occupation: data.occupation })
+//         setLocation({ location: data.states.name })
+//     }
+
+
+// } getInfo()
+
+// fetch("https://frontend-take-home.fetchrewards.com/form")
+//     .then(response => response.json())
+//     .then(data => setData(data))
+//     .then(setOccupation(data.occupations))
+//     .then(setLocation(data.states))
+//     .catch(error => console.error(error))
+// console.log(location, "locations")
+// console.log(occupation, "these are the occupations")
+// console.log(data, "this should be the data")
