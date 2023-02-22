@@ -16,8 +16,9 @@ function UserForm() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [occupation, setOccupation] = useState([]);
-    const [location, setLocation] = useState([]);
+    const [occupation, setOccupation] = useState("");
+    const [location, setLocation] = useState("");
+    const [userInfo, setUserInfo] = useState([]);
 
     useEffect(() => {
         async function getInfo() {
@@ -28,13 +29,9 @@ function UserForm() {
                     'Content-Type': 'application/json'
                 },
             })
-            const data = await response.json()
-            console.log(data)
+            const info = await response.json()
             if (response.ok) {
-                setOccupation(data.occupations)
-                setLocation(data.states)
-                console.log(occupation)
-                console.log(location, "states")
+                setUserInfo(info)
             }
 
         } getInfo()
@@ -51,11 +48,11 @@ function UserForm() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ setName, setEmail, setPassword, setOccupation, setLocation })
+            body: JSON.stringify({ name, email, password, occupation, "state": location })
         }
         )
         if (response.ok) {
-            console.log("response sent, should see 201")
+            console.log(response, "response sent, should see 201")
         }
     };
 
@@ -77,23 +74,37 @@ function UserForm() {
                             <BootStrapInput
                                 id="email"
                                 placeholder="email"
-                                type="text"
+                                type="email"
                                 onChange={e => setEmail(e.target.value)}
                                 value={email} />
                             <BootStrapInput
                                 id="password"
                                 placeholder="password"
-                                type="text"
+                                type="password"
                                 onChange={e => setPassword(e.target.value)}
                                 value={password} />
-                            <div className="form-floating mb-3">
-                                <input placeholder="Occupation" required type="text" name="occupation" id="occupation" className="form-control" />
-                                <label htmlFor="occupation">Occupation</label>
+                            <div className="mb-3">
+                                <select className="form-select" onChange={e => setOccupation(e.target.value)}>
+                                    <option value="">Choose an occupation </option>
+                                    {userInfo.occupations && userInfo.occupations.map((job) => {
+                                        return (
+                                            <option key={job} value={job}>
+                                                {job}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
                             </div>
-                            <div className="form-floating mb-3">
-                                <select>
-                                    <option value="">Choose a state</option>
-
+                            <div className="mb-3">
+                                <select className="form-select" onChange={e => setLocation(e.target.value)}>
+                                    <option value=""> Location </option>
+                                    {userInfo.states && userInfo.states.map((state) => {
+                                        return (
+                                            <option key={state.abbreviation} value={state.abbreviation}>
+                                                {state.name}
+                                            </option>
+                                        )
+                                    })}
                                 </select>
                             </div>
                             <button onClick={handleSubmit}> Submit </button>
@@ -106,34 +117,3 @@ function UserForm() {
 }
 
 export default UserForm
-
-
-// function getInfo() {
-//     console.log("getting occupations and states")
-//     const url = "https://frontend-take-home.fetchrewards.com/form"
-//     const response = fetch(url, {
-//         method: "get",
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     }
-//     )
-//     if (response.ok) {
-//         const data = response.json()
-//         console.log(data, "this should be the occupations and states")
-//         setOccupation({ occupation: data.occupation })
-//         setLocation({ location: data.states.name })
-//     }
-
-
-// } getInfo()
-
-// fetch("https://frontend-take-home.fetchrewards.com/form")
-//     .then(response => response.json())
-//     .then(data => setData(data))
-//     .then(setOccupation(data.occupations))
-//     .then(setLocation(data.states))
-//     .catch(error => console.error(error))
-// console.log(location, "locations")
-// console.log(occupation, "these are the occupations")
-// console.log(data, "this should be the data")
