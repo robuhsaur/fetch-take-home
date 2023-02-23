@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Form } from 'react-bootstrap';
 
 function BootStrapInput(props) {
     const { id, placeholder, labelText, value, onChange, type } = props
@@ -40,19 +41,28 @@ function UserForm() {
 
 
     async function handleSubmit(e) {
-        e.preventDefault(e)
-        const postUrl = "https://frontend-take-home.fetchrewards.com/form"
-        const response = await fetch(
-            postUrl, {
-            method: "post",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, email, password, occupation, "state": location })
-        }
-        )
-        if (response.ok) {
-            console.log(response, "response sent, should see 201")
+        e.preventDefault();
+        if (name.length !== 0 && email.length !== 0 && password.length !== 0 && occupation.length !== 0 && location.length !== 0) {
+            const postUrl = "https://frontend-take-home.fetchrewards.com/form"
+            const response = await fetch(
+                postUrl, {
+                method: "post",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password, occupation, "state": location })
+            }
+            )
+            if (response.ok) {
+                alert("Form submitted!");
+                setName("");
+                setEmail("");
+                setPassword("");
+                setOccupation("");
+                setLocation("");
+            }
+        } else {
+            alert("Fields cannot be empty!");
         }
     };
 
@@ -64,20 +74,22 @@ function UserForm() {
                 <div className="offset-3 col-6">
                     <div className="shadow p-4 mt-4">
                         <h1>Enter new user info</h1>
-                        <form className="justify-content-center">
+                        <Form className="justify-content-center">
                             <BootStrapInput
+                                required
                                 id="name"
-                                placeholder="Full name"
                                 type="text"
                                 value={name}
                                 onChange={e => setName(e.target.value)} />
                             <BootStrapInput
+                                required
                                 id="email"
                                 placeholder="email"
                                 type="email"
                                 onChange={e => setEmail(e.target.value)}
                                 value={email} />
                             <BootStrapInput
+                                required
                                 id="password"
                                 placeholder="password"
                                 type="password"
@@ -88,7 +100,7 @@ function UserForm() {
                                     <option value="">Choose an occupation </option>
                                     {userInfo.occupations && userInfo.occupations.map((job) => {
                                         return (
-                                            <option key={job} value={job}>
+                                            <option required key={job} value={job}>
                                                 {job}
                                             </option>
                                         )
@@ -100,15 +112,15 @@ function UserForm() {
                                     <option value=""> Location </option>
                                     {userInfo.states && userInfo.states.map((state) => {
                                         return (
-                                            <option key={state.abbreviation} value={state.abbreviation}>
+                                            <option required key={state.abbreviation} value={state.abbreviation}>
                                                 {state.name}
                                             </option>
                                         )
                                     })}
                                 </select>
                             </div>
-                            <button onClick={handleSubmit}> Submit </button>
-                        </form>
+                            <button type="submit" onClick={handleSubmit}> Submit </button>
+                        </Form>
                     </div>
                 </div>
             </div>
